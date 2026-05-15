@@ -94,9 +94,53 @@ function handleDeleteUserRequest(req, res) {
   return res.status(200).json({ status: "success", data: deletedUser });
 }
 
+function handleUpdateUserRequest(req, res) {
+  const userId = Number(req.params.id);
+  const user = users.find((currentUser) => currentUser.id === userId);
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: "error", message: "Utilisateur introuvable" });
+  }
+
+  const { name, age, residence } = req.body || {};
+  const hasName = name !== undefined;
+  const hasAge = age !== undefined;
+  const hasResidence = residence !== undefined;
+
+  if (!hasName && !hasAge && !hasResidence) {
+    return res.status(400).json({
+      status: "error",
+      message: "Au moins un champ doit être fourni: name, age, residence",
+    });
+  }
+
+  if (hasAge) {
+    const ageNum = Number(age);
+    if (Number.isNaN(ageNum)) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Age doit être un nombre" });
+    }
+    user.age = ageNum;
+  }
+
+  if (hasName) {
+    user.name = String(name);
+  }
+
+  if (hasResidence) {
+    user.residence = String(residence);
+  }
+
+  return res.status(200).json({ status: "success", data: user });
+}
+
 module.exports = {
   handleUsersRequest,
   handleUserByIdRequest,
   handleCreateUserRequest,
   handleDeleteUserRequest,
+  handleUpdateUserRequest,
 };
