@@ -49,7 +49,40 @@ function handleUserByIdRequest(req, res) {
   return res.status(200).json({ status: "success", data: user });
 }
 
+function handleCreateUserRequest(req, res) {
+  const { name, age, residence } = req.body || {};
+
+  if (!name || age === undefined || residence === undefined) {
+    return res
+      .status(400)
+      .json({
+        status: "error",
+        message: "Champs manquants: name, age, residence",
+      });
+  }
+
+  const ageNum = Number(age);
+  if (Number.isNaN(ageNum)) {
+    return res
+      .status(400)
+      .json({ status: "error", message: "Age doit être un nombre" });
+  }
+
+  const nextId = users.length > 0 ? Math.max(...users.map((u) => u.id)) + 1 : 1;
+  const newUser = {
+    id: nextId,
+    name: String(name),
+    age: ageNum,
+    residence: String(residence),
+  };
+
+  users.push(newUser);
+
+  return res.status(201).json({ status: "success", data: newUser });
+}
+
 module.exports = {
   handleUsersRequest,
   handleUserByIdRequest,
+  handleCreateUserRequest,
 };
