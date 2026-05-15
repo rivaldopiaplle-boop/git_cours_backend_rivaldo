@@ -21,9 +21,69 @@ function handleRootRequest(req, res) {
   res.status(200).json(buildServerStatusPayload());
 }
 
+// Retourne la liste des utilisateurs stockés en mémoire.
+function handleUsersRequest(req, res) {
+  // Supporte le filtrage via query params : id, age, name, residence
+  // Exemples : /users?name=Amine   /users?age=24   /users?residence=Rabat
+  const { id, age, name, residence } = req.query;
+
+  let results = users.slice();
+
+  // Filtre par identifiant (égalité numérique)
+  if (id !== undefined) {
+    const idNum = Number(id);
+    if (!Number.isNaN(idNum)) {
+      results = results.filter((u) => u.id === idNum);
+    } else {
+      // si id non numérique, renvoyer aucun résultat
+      results = [];
+    }
+  }
+
+  // Filtre par âge (égalité numérique)
+  if (age !== undefined) {
+    const ageNum = Number(age);
+    if (!Number.isNaN(ageNum)) {
+      results = results.filter((u) => u.age === ageNum);
+    } else {
+      results = [];
+    }
+  }
+
+  // Filtre par nom (recherche insensible à la casse, correspondance partielle)
+  if (name !== undefined) {
+    const q = String(name).toLowerCase();
+    results = results.filter((u) => u.name.toLowerCase().includes(q));
+  }
+
+  // Filtre par résidence (insensible à la casse, partiel)
+  if (residence !== undefined) {
+    const q = String(residence).toLowerCase();
+    results = results.filter((u) => u.residence.toLowerCase().includes(q));
+  }
+
+  res.status(200).json({ status: "success", data: results });
+}
+
+// Retourne un utilisateur précis à partir de son identifiant.
+function handleUserByIdRequest(req, res) {
+  const userId = Number(req.params.id);
+  const user = users.find((currentUser) => currentUser.id === userId);
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: "error", message: "Utilisateur introuvable" });
+  }
+
+  return res.status(200).json({ status: "success", data: user });
+}
+
 // Enregistre les routes de l'application.
 function registerRoutes(application) {
   application.get("/", handleRootRequest);
+  application.get("/users", handleUsersRequest);
+  application.get("/users/:id", handleUserByIdRequest);
 }
 
 // Démarre le serveur HTTP sur le port configuré.
@@ -39,6 +99,8 @@ startServer(app, port);
 module.exports = {
   buildServerStatusPayload,
   handleRootRequest,
+  handleUsersRequest,
+  handleUserByIdRequest,
   registerRoutes,
   startServer,
   users,
