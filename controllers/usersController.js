@@ -53,12 +53,10 @@ function handleCreateUserRequest(req, res) {
   const { name, age, residence } = req.body || {};
 
   if (!name || age === undefined || residence === undefined) {
-    return res
-      .status(400)
-      .json({
-        status: "error",
-        message: "Champs manquants: name, age, residence",
-      });
+    return res.status(400).json({
+      status: "error",
+      message: "Champs manquants: name, age, residence",
+    });
   }
 
   const ageNum = Number(age);
@@ -81,8 +79,24 @@ function handleCreateUserRequest(req, res) {
   return res.status(201).json({ status: "success", data: newUser });
 }
 
+function handleDeleteUserRequest(req, res) {
+  const userId = Number(req.params.id);
+  const userIndex = users.findIndex((currentUser) => currentUser.id === userId);
+
+  if (userIndex === -1) {
+    return res
+      .status(404)
+      .json({ status: "error", message: "Utilisateur introuvable" });
+  }
+
+  const deletedUser = users.splice(userIndex, 1)[0];
+
+  return res.status(200).json({ status: "success", data: deletedUser });
+}
+
 module.exports = {
   handleUsersRequest,
   handleUserByIdRequest,
   handleCreateUserRequest,
+  handleDeleteUserRequest,
 };
