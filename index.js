@@ -3,6 +3,14 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Source de données temporaire en mémoire pour préparer le futur CRUD.
+const users = [
+  { id: 1, name: "Amine", age: 24, residence: "Casablanca" },
+  { id: 2, name: "Sara", age: 29, residence: "Rabat" },
+  { id: 3, name: "Yassine", age: 31, residence: "Marrakech" },
+  { id: 4, name: "Lina", age: 22, residence: "Tanger" },
+];
+
 // Construit la réponse standard de santé du serveur.
 function buildServerStatusPayload() {
   return { status: "OK", message: "Serveur démarré avec succès" };
@@ -33,4 +41,5 @@ module.exports = {
   handleRootRequest,
   registerRoutes,
   startServer,
+  users,
 };
