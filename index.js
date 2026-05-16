@@ -9,8 +9,6 @@ const port = process.env.PORT || 3000;
 
 // Le router des utilisateurs contient toutes les routes liées à la ressource "users".
 const usersRoutes = require("./routers/userRouters");
-// On exporte aussi la base en mémoire pour les tests ou pour l'exposer ailleurs si besoin.
-const users = require("./data/usersData");
 
 // Middleware JSON d'Express.
 // Il permet de lire req.body quand le client envoie du JSON.
@@ -75,5 +73,4 @@ module.exports = {
   handleRootRequest,
   registerRoutes,
   startServer,
-  users,
 };
