@@ -3,6 +3,7 @@ const express = require("express");
 // Un Router Express sert à regrouper les routes liées à une même ressource.
 // Ici, toutes les routes concernent les utilisateurs.
 const router = express.Router();
+const requireAuth = require("../middleware/authMiddleware");
 const {
   handleUsersRequest,
   handleUserByIdRequest,
@@ -10,6 +11,9 @@ const {
   handleDeleteUserRequest,
   handleUpdateUserRequest,
 } = require("../controllers/usersController");
+
+// Applique le middleware d'authentification à toutes les routes /users
+router.use(requireAuth);
 
 // GET /users
 // Renvoie la liste des utilisateurs, avec support des filtres via query params.

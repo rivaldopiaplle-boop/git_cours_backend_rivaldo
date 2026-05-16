@@ -9,6 +9,7 @@ const port = process.env.PORT || 3000;
 
 // Le router des utilisateurs contient toutes les routes liées à la ressource "users".
 const usersRoutes = require("./routers/userRouters");
+const authRoutes = require("./routers/authRoutes");
 
 // Middleware JSON d'Express.
 // Il permet de lire req.body quand le client envoie du JSON.
@@ -30,6 +31,7 @@ function handleRootRequest(req, res) {
 function registerRoutes(application) {
   application.get("/", handleRootRequest);
   application.use("/users", usersRoutes);
+  application.use("/auth", authRoutes);
 }
 
 // Middleware spécial pour intercepter les erreurs JSON mal formées.
